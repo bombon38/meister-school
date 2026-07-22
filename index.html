@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>전국 마이스터고 탐험 | 나의 진로 지도</title>
+<style>
+  :root{
+    --bg:#eef2fa; --bg-soft:#f7f9fd; --card:#ffffff; --card-2:#eef2fb;
+    --text:#1c2036; --text-dim:#5c6280; --line:rgba(20,25,60,.10);
+    --brand:#6c5ce7; --brand-2:#0aa6cc; --radius:20px;
+    --shadow:0 18px 44px rgba(60,70,120,.16);
+    --card-shadow:0 4px 16px rgba(60,70,120,.07);
+    --font:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+  body::before,body::after{content:"";position:fixed;border-radius:50%;filter:blur(90px);z-index:0;opacity:.5;pointer-events:none;}
+  body::before{width:480px;height:480px;background:radial-gradient(circle,#a99bff,transparent 70%);top:-140px;left:-120px;opacity:.30;}
+  body::after{width:520px;height:520px;background:radial-gradient(circle,#7fe0f0,transparent 70%);bottom:-180px;right:-160px;opacity:.28;}
+  .wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 20px;}
+
+  /* 네비 */
+  header.nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(16px);background:rgba(255,255,255,.75);border-bottom:1px solid var(--line);}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px;gap:10px;}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.5px;white-space:nowrap;}
+  .logo .dot{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--brand),var(--brand-2));display:grid;place-items:center;font-size:16px;}
+  .nav-links{display:flex;gap:4px;flex-wrap:wrap;}
+  .nav-links button{font-family:inherit;font-size:14px;font-weight:600;color:var(--text-dim);background:transparent;border:0;padding:9px 14px;border-radius:12px;cursor:pointer;transition:.2s;white-space:nowrap;}
+  .nav-links button:hover{color:var(--text);background:var(--card-2);}
+  .nav-links button.active{color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand-2));}
+
+  /* 히어로 */
+  .hero{text-align:center;padding:70px 0 50px;}
+  .badge{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;padding:7px 16px;border-radius:999px;color:var(--brand);background:rgba(108,92,231,.10);border:1px solid rgba(108,92,231,.22);margin-bottom:22px;}
+  .hero h1{font-size:clamp(30px,6vw,54px);font-weight:900;letter-spacing:-1.5px;line-height:1.15;background:linear-gradient(120deg,#2a2d5a 15%,#6c5ce7 60%,#0aa6cc);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .hero p.sub{margin:20px auto 0;max-width:660px;font-size:17px;color:var(--text-dim);}
+  .hero-cta{margin-top:34px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+  .btn{font-family:inherit;font-weight:700;font-size:15px;padding:14px 26px;border-radius:14px;cursor:pointer;border:0;transition:.2s;}
+  .btn-primary{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;box-shadow:0 10px 30px rgba(108,92,231,.4);}
+  .btn-primary:hover{transform:translateY(-2px);}
+  .btn-ghost{background:var(--card);color:var(--text);border:1px solid var(--line);}
+  .btn-ghost:hover{background:var(--card-2);}
+
+  /* 통계 스트립 */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-top:46px;}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;text-align:center;box-shadow:var(--card-shadow);}
+  .stat .num{font-size:34px;font-weight:900;background:linear-gradient(120deg,#6c5ce7,#0aa6cc);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .stat .lbl{color:var(--text-dim);font-size:13.5px;margin-top:4px;font-weight:600;}
+
+  section.block{padding:56px 0;}
+  .section-head{margin-bottom:34px;}
+  .section-head .kicker{color:var(--brand-2);font-weight:800;font-size:14px;letter-spacing:1px;text-transform:uppercase;}
+  .section-head h2{font-size:clamp(24px,4vw,34px);font-weight:900;letter-spacing:-1px;margin-top:8px;}
+  .section-head p{color:var(--text-dim);margin-top:10px;max-width:760px;}
+
+  .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;}
+  .info-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px;transition:.25s;box-shadow:var(--card-shadow);}
+  .info-card:hover{transform:translateY(-4px);border-color:rgba(108,92,231,.5);}
+  .info-card .emoji{font-size:32px;margin-bottom:14px;}
+  .info-card h3{font-size:18px;font-weight:800;margin-bottom:8px;}
+  .info-card p{color:var(--text-dim);font-size:14.5px;}
+
+  .lead{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:28px 30px;font-size:16px;color:var(--text-dim);box-shadow:var(--card-shadow);}
+  .lead b{color:var(--text);}
+
+  /* 연혁 */
+  .timeline{margin-top:12px;border-left:2px solid var(--line);padding-left:26px;display:flex;flex-direction:column;gap:22px;}
+  .tl-item{position:relative;}
+  .tl-item::before{content:"";position:absolute;left:-33px;top:4px;width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,var(--brand),var(--brand-2));box-shadow:0 0 0 4px rgba(108,92,231,.2);}
+  .tl-item .year{font-weight:800;color:var(--brand-2);font-size:15px;}
+  .tl-item .txt{color:var(--text-dim);font-size:14.5px;}
+
+  /* 취업률 비교 */
+  .compare{display:flex;flex-direction:column;gap:16px;margin-top:8px;}
+  .cmp-row{display:grid;grid-template-columns:140px 1fr 60px;align-items:center;gap:14px;}
+  .cmp-row .name{font-weight:700;font-size:14.5px;}
+  .cmp-bar{height:16px;border-radius:999px;background:#e2e7f2;overflow:hidden;}
+  .cmp-fill{height:100%;border-radius:999px;}
+  .cmp-row .pct{font-weight:800;font-size:14.5px;text-align:right;}
+  @media(max-width:520px){.cmp-row{grid-template-columns:96px 1fr 48px;gap:10px;}.cmp-row .name{font-size:13px;}}
+
+  /* 탭 */
+  .tabs{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px;}
+  .tab{font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;padding:11px 16px;border-radius:14px;background:var(--card);border:1px solid var(--line);color:var(--text-dim);transition:.2s;}
+  .tab .ic{font-size:17px;}
+  .tab:hover{color:var(--text);transform:translateY(-2px);}
+  .tab.active{color:#fff;border-color:transparent;box-shadow:0 8px 24px rgba(0,0,0,.35);}
+  .tab .cnt{font-size:11.5px;background:rgba(20,25,60,.08);padding:2px 8px;border-radius:999px;font-weight:800;}
+  .tab.active .cnt{background:rgba(255,255,255,.28);}
+
+  .field-banner{display:flex;align-items:center;gap:16px;padding:22px 26px;border-radius:var(--radius);margin-bottom:22px;border:1px solid var(--line);}
+  .field-banner .big-ic{font-size:40px;}
+  .field-banner h3{font-size:22px;font-weight:900;}
+  .field-banner p{color:var(--text-dim);font-size:14px;}
+
+  .table-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--card-shadow);}
+  table{width:100%;border-collapse:collapse;}
+  thead th{text-align:left;font-size:12.5px;font-weight:800;letter-spacing:.5px;color:var(--text-dim);text-transform:uppercase;padding:16px 20px;background:var(--bg-soft);border-bottom:1px solid var(--line);}
+  tbody td{padding:15px 20px;border-bottom:1px solid var(--line);font-size:14.5px;color:var(--text-dim);vertical-align:middle;}
+  tbody tr:last-child td{border-bottom:0;}
+  tbody tr{transition:.15s;cursor:pointer;}
+  tbody tr:hover{background:var(--card-2);}
+  .school-name{font-weight:800;color:var(--text);font-size:15.5px;display:flex;align-items:center;gap:8px;}
+  .school-name .arrow{color:var(--brand-2);opacity:0;transition:.2s;}
+  tbody tr:hover .school-name .arrow{opacity:1;transform:translateX(3px);}
+  .pill{display:inline-block;font-size:12px;font-weight:700;padding:4px 11px;border-radius:999px;background:rgba(108,92,231,.14);color:#5b4bd6;white-space:nowrap;}
+  .pill.gov{background:rgba(10,166,204,.14);color:#0a8bab;}
+  .pill.pri{background:rgba(232,67,147,.13);color:#c43d7e;}
+
+  /* 팝업 */
+  .modal-overlay{position:fixed;inset:0;background:rgba(6,7,15,.75);backdrop-filter:blur(6px);z-index:100;display:none;align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.open{display:flex;animation:fadeIn .2s ease;}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .modal{width:min(720px,100%);max-height:88vh;overflow-y:auto;background:var(--bg-soft);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);animation:pop .25s cubic-bezier(.2,.9,.3,1.3);}
+  @keyframes pop{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
+  /* 분야 상징 이미지 배너 */
+  .modal-illust{position:relative;height:150px;border-radius:24px 24px 0 0;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:14px;}
+  .modal-illust::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(247,249,253,.92));}
+  .modal-illust .em{font-size:clamp(42px,10vw,64px);filter:drop-shadow(0 6px 14px rgba(0,0,0,.35));animation:floaty 3s ease-in-out infinite;}
+  .modal-illust .em:nth-child(2){animation-delay:.4s;} .modal-illust .em:nth-child(3){animation-delay:.8s;} .modal-illust .em:nth-child(4){animation-delay:1.2s;}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .modal-hero{padding:22px 30px 24px;position:relative;}
+  .modal-close{position:absolute;top:18px;right:18px;width:38px;height:38px;border-radius:12px;border:0;cursor:pointer;background:rgba(255,255,255,.15);color:#fff;font-size:18px;transition:.2s;}
+  .modal-close:hover{background:rgba(255,255,255,.3);transform:rotate(90deg);}
+  .modal-hero .m-field{font-size:13px;font-weight:800;color:var(--brand);}
+  .modal-hero h2{font-size:26px;font-weight:900;letter-spacing:-.8px;margin:6px 0 12px;line-height:1.2;}
+  .modal-tags{display:flex;gap:8px;flex-wrap:wrap;}
+  .modal-body{padding:8px 30px 30px;}
+  .m-strength{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin:18px 0;}
+  .m-strength .lbl{font-size:12.5px;font-weight:800;color:var(--brand-2);margin-bottom:6px;}
+  .m-strength p{font-size:15px;color:var(--text);line-height:1.6;}
+  .m-rows{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .m-row{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;}
+  .m-row.full{grid-column:1/-1;}
+  .m-row .lbl{font-size:12px;font-weight:800;color:var(--text-dim);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;}
+  .m-row .val{font-size:14.5px;color:var(--text);word-break:break-word;line-height:1.55;}
+  .m-row .val a{color:var(--brand-2);text-decoration:none;}
+  .m-row .val a:hover{text-decoration:underline;}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;}
+  .chip{font-size:12.5px;font-weight:700;padding:5px 11px;border-radius:999px;background:rgba(108,92,231,.13);color:#5b4bd6;}
+  /* 남녀비율 바 (색상 위주) */
+  .ratio-bar{display:flex;height:34px;border-radius:10px;overflow:hidden;font-size:13px;font-weight:800;box-shadow:inset 0 0 0 1px var(--line);}
+  .ratio-m{background:linear-gradient(90deg,#3a9e94,#71c4b8);display:flex;align-items:center;gap:6px;padding:0 12px;color:#08403a;transition:width .5s cubic-bezier(.2,.9,.3,1);}
+  .ratio-f{background:linear-gradient(90deg,#c56f92,#dfa5bb);display:flex;align-items:center;justify-content:flex-end;gap:6px;padding:0 12px;color:#4a1e30;transition:width .5s cubic-bezier(.2,.9,.3,1);}
+  .ratio-m .lab,.ratio-f .lab{font-size:11px;opacity:.85;}
+  .ratio-legend{display:flex;gap:16px;margin-top:8px;font-size:12px;font-weight:700;color:var(--text-dim);}
+  .ratio-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:middle;}
+
+  /* 신규 6개교 */
+  .new-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;}
+  .new-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px;transition:.25s;position:relative;overflow:hidden;box-shadow:var(--card-shadow);}
+  .new-card:hover{transform:translateY(-5px);border-color:rgba(0,210,255,.5);}
+  .new-card .top{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+  .new-card .emoji{font-size:30px;}
+  .new-card h3{font-size:19px;font-weight:900;line-height:1.25;}
+  .new-card .oldname{font-size:12.5px;color:var(--text-dim);margin-top:2px;}
+  .new-card .meta{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px;}
+  .tagx{font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;}
+  .tagx.field{background:rgba(10,166,204,.14);color:#0a8bab;}
+  .tagx.loc{background:rgba(108,92,231,.14);color:#5b4bd6;}
+  .tagx.ok{background:rgba(0,170,100,.15);color:#0a8f57;}
+  .tagx.cond{background:rgba(214,158,0,.16);color:#a67c00;}
+  .tagx.cap{background:rgba(20,25,60,.06);color:var(--text-dim);}
+  .new-card p{color:var(--text-dim);font-size:14px;line-height:1.6;}
+
+  .page{display:none;}
+  .page.active{display:block;animation:fadeIn .3s ease;}
+  .notice{display:flex;gap:12px;align-items:flex-start;background:rgba(10,166,204,.08);border:1px solid rgba(10,166,204,.28);border-radius:16px;padding:16px 20px;margin-bottom:26px;font-size:14px;color:#0a7fa0;}
+  .notice b{color:#065c76;}
+  footer{border-top:1px solid var(--line);padding:34px 0;text-align:center;color:var(--text-dim);font-size:13.5px;margin-top:30px;line-height:1.7;}
+
+  @media(max-width:640px){
+    .m-rows{grid-template-columns:1fr;}
+    thead{display:none;}
+    tbody td{display:block;padding:6px 18px;border:0;}
+    tbody tr{display:block;padding:14px 0;border-bottom:1px solid var(--line);}
+    tbody td[data-label]::before{content:attr(data-label);display:block;font-size:11px;font-weight:800;color:var(--text-dim);text-transform:uppercase;margin-bottom:2px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <div class="logo"><span class="dot">🎓</span> 마이스터고 탐험</div>
+    <nav class="nav-links">
+      <button data-page="home" class="active">홈</button>
+      <button data-page="explore">분야별 탐색</button>
+      <button data-page="new2026">2026 신규 6개교</button>
+    </nav>
+  </div>
+</header>
+
+<!-- ===================== 홈 ===================== -->
+<main class="page active" id="page-home">
+  <div class="wrap">
+    <section class="hero">
+      <span class="badge">✨ 나의 손으로 찾는 진로 지도</span>
+      <h1>전국 마이스터고,<br/>내 미래를 여기서 찾다</h1>
+      <p class="sub">9개 산업분야 · 58개 학교를 한눈에. 관심 분야 탭을 눌러 학교를 살펴보고, 학교 이름을 클릭하면 상세 정보가 팝업으로 열립니다.</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary" onclick="goPage('explore')">🔍 분야별로 탐색하기</button>
+        <button class="btn btn-ghost" onclick="goPage('new2026')">🆕 2026 신규 학교 보기</button>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="num">58</div><div class="lbl">현재 운영 중인 학교</div></div>
+        <div class="stat"><div class="num">9</div><div class="lbl">산업분야</div></div>
+        <div class="stat"><div class="num">73.1%</div><div class="lbl">마이스터고 취업률</div></div>
+        <div class="stat"><div class="num">0원</div><div class="lbl">수업료·입학금</div></div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="section-head">
+        <div class="kicker">What is Meister?</div>
+        <h2>마이스터고란 무엇일까?</h2>
+      </div>
+      <div class="lead">
+        ‘마이스터(Meister)’는 독일어로 <b>“최고의 전문가·장인”</b>을 뜻합니다. 마이스터고는 전문적인 직업교육의 발전을 위해 <b>산업계의 수요에 직접 연계된 맞춤형 교육과정</b>을 제공하여 <b>예비 마이스터</b>를 양성하는 특수목적고등학교입니다. 법령상 명칭은 <b>‘산업수요 맞춤형 고등학교’</b>이며, 국가·지역 전략 산업과 연계된 유망 분야에서 지식과 실무 능력을 겸비한 <b>미래형 기술영재</b>를 길러냅니다.
+      </div>
+      <div class="info-grid" style="margin-top:20px;">
+        <div class="info-card"><div class="emoji">💰</div><h3>학비 전액 지원</h3><p>수업료·입학금·학교운영비 면제. 별도의 장학금과 기숙사를 제공해 교육에만 집중할 수 있어요.</p></div>
+        <div class="info-card"><div class="emoji">🚀</div><h3>졸업 = 취업</h3><p>중소·중견기업은 물론 대기업과도 협약을 맺어 양질의 취업처를 제공합니다. 취업률 73.1%로 특성화고·일반고를 크게 앞섭니다.</p></div>
+        <div class="info-card"><div class="emoji">🪖</div><h3>병역 특례</h3><p>최대 4년간 입영 연기가 가능하고, 군 복무 시 특기 분야에서 근무할 수 있는 길이 열려 있어요.</p></div>
+        <div class="info-card"><div class="emoji">🎓</div><h3>선취업 후진학</h3><p>먼저 취업해 경력을 쌓고, 직장에서 3년 이상 근무하면 학위를 취득할 수 있는 다양한 경로가 있습니다.</p></div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="section-head">
+        <div class="kicker">History</div>
+        <h2>마이스터고 걸어온 길</h2>
+        <p>2008년 한국형 마이스터고 육성계획으로 출발해, 4차 산업혁명·첨단산업 분야로 꾸준히 확대되고 있습니다.</p>
+      </div>
+      <div class="timeline" id="timeline"></div>
+    </section>
+
+    <section class="block">
+      <div class="section-head">
+        <div class="kicker">Employment</div>
+        <h2>취업률, 얼마나 높을까?</h2>
+        <p>교육부·한국교육개발원 「2025년 직업계고 졸업자 취업통계」(2025년 4월 1일 기준) 비교입니다.</p>
+      </div>
+      <div class="lead">
+        <div class="compare">
+          <div class="cmp-row"><div class="name">마이스터고</div><div class="cmp-bar"><div class="cmp-fill" style="width:73.1%;background:linear-gradient(90deg,#6c5ce7,#00d2ff);"></div></div><div class="pct" style="color:#0a8bab">73.1%</div></div>
+          <div class="cmp-row"><div class="name">특성화고</div><div class="cmp-bar"><div class="cmp-fill" style="width:52.4%;background:linear-gradient(90deg,#4a6cf7,#7aa2ff);"></div></div><div class="pct">52.4%</div></div>
+          <div class="cmp-row"><div class="name">일반고 직업반</div><div class="cmp-bar"><div class="cmp-fill" style="width:38.2%;background:linear-gradient(90deg,#5a5f8a,#8b90c0);"></div></div><div class="pct">38.2%</div></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- ===================== 분야별 탐색 ===================== -->
+<div class="page" id="page-explore">
+  <div class="wrap">
+    <section class="block">
+      <div class="section-head">
+        <div class="kicker">Explore by Industry</div>
+        <h2>9개 산업분야로 탐색하기</h2>
+        <p>관심 있는 분야 탭을 누르면 해당 분야의 마이스터고 목록이 나타납니다. 학교 이름을 클릭하면 상세 정보 팝업이 열려요.</p>
+      </div>
+      <div class="notice"><span>💡</span><span>학교명·설립구분·산업분야·강점·전화·홈페이지·주소·남녀비율·학과·취업처 정보를 팝업에서 볼 수 있습니다. 표의 어느 곳이든 클릭하면 팝업이 열려요.</span></div>
+      <div class="tabs" id="tabs"></div>
+      <div id="field-banner"></div>
+      <div class="table-card">
+        <table>
+          <thead><tr><th>학교명</th><th>설립구분</th><th>산업분야</th><th>지역</th></tr></thead>
+          <tbody id="school-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ===================== 2026 신규 ===================== -->
+<div class="page" id="page-new2026">
+  <div class="wrap">
+    <section class="block">
+      <div class="section-head">
+        <div class="kicker">Coming in 2028</div>
+        <h2>2026년 새로 지정된 마이스터고 6개교</h2>
+        <p>교육부 제20차 마이스터고 지정·운영위원회(2026년 6월 16일 발표) · <b>2028년 3월 개교 예정</b>. 반도체·AI 등 첨단산업 중심으로 6개교가 새로 지정되어, 전국 마이스터고는 총 65개교로 늘어납니다. 현재 중2 학생의 고입부터 지원할 수 있어요.</p>
+      </div>
+      <div class="notice"><span>📌</span><span>표기된 <b>정원은 학년당(입학정원)</b>이며 3개 학년 전체는 약 3배 규모입니다. 새 교명은 모두 <b>가칭</b>이고, ‘조건부 동의’ 3개교는 9월 중 최종 지정이 확정됩니다. 실제 지원 시 하이파이브 포털(hifive.go.kr)과 시·도교육청 발표를 확인하세요.</span></div>
+      <div class="new-grid" id="new-grid"></div>
+    </section>
+  </div>
+</div>
+
+<!-- ===================== 팝업 ===================== -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-illust" id="modal-illust"></div>
+    <div class="modal-hero" id="modal-hero">
+      <button class="modal-close" onclick="closeModal()" style="top:-138px;">✕</button>
+      <div class="m-field" id="m-field"></div>
+      <h2 id="m-name"></h2>
+      <div class="modal-tags" id="m-tags"></div>
+    </div>
+    <div class="modal-body">
+      <div class="m-strength">
+        <div class="lbl">💪 우리 학교의 강점</div>
+        <p id="m-strength"></p>
+      </div>
+      <div class="m-rows">
+        <div class="m-row"><div class="lbl">📞 전화번호</div><div class="val" id="m-phone"></div></div>
+        <div class="m-row"><div class="lbl">🌐 홈페이지</div><div class="val" id="m-web"></div></div>
+        <div class="m-row full"><div class="lbl">📍 주소</div><div class="val" id="m-addr"></div></div>
+        <div class="m-row full"><div class="lbl">👥 남녀 비율 (남 : 여)</div><div class="val" id="m-ratio"></div></div>
+        <div class="m-row full"><div class="lbl">📚 학과</div><div class="val"><div class="chips" id="m-depts"></div></div></div>
+        <div class="m-row full"><div class="lbl">🏢 주요 취업처</div><div class="val" id="m-jobs"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="wrap">
+  진로교육용 학습 자료 · 전국 마이스터고 탐험 웹앱<br/>
+  데이터 출처: 하이파이브(HIFIVE) 학교정보 · 교육부 마이스터고 개요 및 신규지정 발표 (2026년 기준)
+</footer>
+
+<script>
+/* ===== 9개 산업분야 ===== */
+const categories = [
+  { key:"semicon",  name:"반도체·전자·통신", icon:"💾", color:"#6c5ce7", desc:"칩과 전자·통신 기술로 미래 인프라를 만드는 분야" },
+  { key:"sw",       name:"SW·AI·로봇",       icon:"🤖", color:"#00b894", desc:"소프트웨어, 인공지능, 로봇으로 세상을 움직이는 분야" },
+  { key:"machine",  name:"기계·메카트로닉스·자동차", icon:"⚙️", color:"#e17055", desc:"정밀 기계·자동차·철강을 설계하고 만드는 분야" },
+  { key:"marine",   name:"조선·해양·항만",   icon:"🚢", color:"#0984e3", desc:"배·해양·수산·항만 물류를 다루는 분야" },
+  { key:"energy",   name:"에너지·이차전지·화학", icon:"🔋", color:"#f0932b", desc:"전기·발전·배터리·석유화학으로 에너지를 책임지는 분야" },
+  { key:"bio",      name:"바이오·의료·식품", icon:"🧬", color:"#e84393", desc:"생명과학·의료기기·식품으로 건강한 삶을 만드는 분야" },
+  { key:"agri",     name:"농업·축산·자원",   icon:"🌱", color:"#26de81", desc:"스마트농업·축산·농생명 자원으로 미래 먹거리를 키우는 분야" },
+  { key:"construct",name:"건설·인프라·항공", icon:"✈️", color:"#a29bfe", desc:"건설·플랜트·항공·소방 등 사회 인프라를 짓고 지키는 분야" },
+  { key:"finance",  name:"금융·물류·서비스", icon:"💳", color:"#00cec9", desc:"무역·금융·항만물류·서비스로 경제를 연결하는 분야" },
+];
+
+/* ===== 58개 학교 (하이파이브 학교정보 기반) =====
+   category: 위 9개 key 중 하나 / dept는 " / "로 구분 */
+const schools = [
+  {name:"미림마이스터고등학교",category:"sw",type:"사립",field:"뉴미디어콘텐츠(SW·디자인)",region:"서울",strength:"서울 관악구 소재, 수도권 IT·콘텐츠 기업 밀집지역 인접 / 100여 개 IT기업과 산학협약",phone:"02-872-4071",website:"www.e-mirim.hs.kr",address:"서울특별시 관악구 호암로 546",ratio:"41 : 59",dept:"뉴미디어디자인과 / 뉴미디어소프트웨어과",jobs:"네이버, 카카오, 넥슨, NHN 등 IT·게임기업, 금융권 IT직군, SI·웹에이전시 및 UI/UX 디자인 기업"},
+  {name:"서울도시과학기술고등학교",category:"construct",type:"공립",field:"해외건설·플랜트",region:"서울",strength:"서울 소재, 대형 건설사 본사 밀집 수도권 입지 / 해외건설협회·건설사 협약",phone:"02-940-2500",website:"sust.sen.hs.kr",address:"서울특별시 성북구 종암동 종암로",ratio:"86 : 14",dept:"해외플랜트산업설비 / 에코공정플랜트과 / 해외건설전기통신 / 해외시설물건설",jobs:"현대건설, GS건설, 대우건설, DL이앤씨 등 종합건설사 및 해외 플랜트 EPC 기업"},
+  {name:"서울로봇고등학교",category:"sw",type:"공립",field:"로봇",region:"서울",strength:"서울 강남구 소재, 전국 유일 로봇 분야 마이스터고 / 서울 내 취업률 4년 연속 1위(98%)",phone:"02-3016-0110",website:"srobot.sen.hs.kr",address:"서울특별시 강남구 일원동 광평로20길",ratio:"95 : 5",dept:"로봇설계과 / 로봇제어과 / 로봇소프트웨어과 / 로봇정보통신과",jobs:"로봇 시스템·자동화 설비 기업, 공기업 및 대기업 생산기술직, 군 기술부사관(군특성화 학과 운영)"},
+  {name:"수도전기공업고등학교",category:"energy",type:"사립",field:"에너지(전기)",region:"서울",strength:"한국전력공사가 직접 설립·운영하는 학교 / 한전 그룹사와 직접 연계, 80여 개 기업 협약, 취업률 97.7%",phone:"02-524-9830",website:"sudo.sen.hs.kr",address:"서울특별시 강남구 개포로 410",ratio:"100 : 0",dept:"에너지정보통신과 / 에너지기계과 / 에너지전자제어과 / 전기에너지과",jobs:"한국전력공사, 한국수력원자력, 한국중부발전, 한전KPS 등 전력 공기업 / LH, 서울주택도시공사, 한국도로공사, 한국조폐공사 / 포스코, 삼성전자, HD현대오일뱅크 / 하나은행, 국민연금공단"},
+  {name:"부산기계공업고등학교",category:"machine",type:"국립",field:"기계·메카트로닉스",region:"부산",strength:"부산 해운대 소재 국립 마이스터고 / 동남권 기계·조선 산업벨트 인접, 일본 히로시마공고 등 해외 교류",phone:"051-719-0110",website:"bmt.hs.kr",address:"부산광역시 해운대구 우동 해운대로",ratio:"100 : 0",dept:"기계과 / 전자기계과 / 전기과 / 산업설비과 / 기계시스템과 / 설비시스템과 / 스마트팩토리과",jobs:"대기업 생산기술직(연간 70여 명), 공기업, 지역 우수 중견·중소 기계기업, 군 기술부사관, 해외취업(호주 등)"},
+  {name:"부산소프트웨어마이스터고등학교",category:"sw",type:"공립",field:"소프트웨어",region:"부산",strength:"부산 센텀시티 등 부산 IT·디지털 산업단지 인접 / 지역 SW기업 및 금융 IT와 협약",phone:"051-971-2153",website:"www.bssm.hs.kr",address:"부산광역시 강서구 봉림동 가락대로",ratio:"81 : 19",dept:"소프트웨어 개발과 / 임베디드 소프트웨어과 / AI 소프트웨어 개발과",jobs:"IT 서비스·SI 기업, 게임·플랫폼 기업, 금융권 IT직군, 정보보안 기업"},
+  {name:"부산자동차마이스터고등학교",category:"machine",type:"공립",field:"자동차산업",region:"부산",strength:"부산·경남 자동차부품 산업 클러스터 인접 / 르노코리아 부산공장 등 완성차·부품사 협약",phone:"051-263-4825",website:"automotive.hs.kr",address:"부산 사하구 장림1동",ratio:"100 : 0",dept:"미래자동차정비과정 / 자동차생산자동화과정 / 자동차부품가공과정",jobs:"르노코리아자동차, 현대·기아 협력사, 자동차부품 제조기업, 자동차 정비·서비스 네트워크"},
+  {name:"부산해사고등학교",category:"marine",type:"국립",field:"해양(해기사)",region:"부산",strength:"부산 영도구 소재 국립 해사고 / 국립해사고등학교 설치령 운영, 학비·기숙사비 전액 국비 지원, 승선근무예비역 병역특례",phone:"051-410-2030",website:"maritime.hs.kr",address:"부산광역시 영도구 동삼동 해양로",ratio:"100 : 0",dept:"항해과 / 기관과",jobs:"HMM, 고려해운, 팬오션, SK해운, 조광해운 등 해운선사 항해사·기관사 / 해운선사 육상직 / 해군·해양경찰 부사관"},
+  {name:"경북기계공업고등학교",category:"machine",type:"공립",field:"기계·메카트로닉스",region:"대구",strength:"대구 소재, 대구·구미 기계금속 산업단지 인접 / 지역 뿌리산업 기업과 협약",phone:"053-231-8312",website:"gbgigong.hs.kr",address:"대구광역시 달서구 월배로 275",ratio:"100 : 0",dept:"정밀기계과 / 자동화설비과 / 기계메카트로닉스계열 / 전기전자제어과",jobs:"대기업 생산기술직, 자동차·기계부품 제조기업, 공기업, 군 기술부사관"},
+  {name:"대구농업마이스터고등학교",category:"agri",type:"공립",field:"도시형 첨단농업경영",region:"대구",strength:"대구 소재, 스마트팜·도시농업 특화 / 농협·농업기술원 등 유관기관 협약",phone:"053-231-8014",website:"dma.dge.hs.kr",address:"대구광역시 수성구 노변동 달구벌대로",ratio:"80 : 20",dept:"스마트농생명 / 도시공간조경과 / 그린바이오산업",jobs:"농협 계열사, 스마트팜 시설·설비 기업, 식품·종자 기업, 농업법인 및 창업 영농"},
+  {name:"대구반도체마이스터고등학교",category:"semicon",type:"공립",field:"반도체",region:"대구",strength:"대구 소재, 구미 전자산업단지 및 대구 국가산단 인접 / 반도체 분야 신설 마이스터고",phone:"053-231-8500",website:"dgsm.dge.hs.kr",address:"대구광역시 달서구 용산로 113",ratio:"92 : 8",dept:"전기과 / 전자과 / 시각디자인과 / 스마트팩토리과 / 반도체 장비과 / 반도체 제조과 / 반도체계열",jobs:"삼성전자, SK하이닉스 등 반도체 대기업 및 반도체 소부장(소재·부품·장비) 기업"},
+  {name:"대구소프트웨어마이스터고등학교",category:"sw",type:"공립",field:"소프트웨어·SW융합",region:"대구",strength:"대구 달성군 구지면 소재, 대구국가산단 인접 / 100개 이상 SW기업·유관기관 MOU, 실리콘밸리 현장체험학습, 취업률 98.5%",phone:"053-231-9226",website:"www.dgsw.hs.kr",address:"대구광역시 달성군 구지면 창리로11길 93",ratio:"84 : 16",dept:"소프트웨어개발과 / 공통과 / 인공지능소프트웨어과",jobs:"해외 IT기업(A&K, Ceeya, Qoom, XL8AI 등) / 신용보증기금, 한국사회보장정보원, 우리은행 등 공공·금융 / 오케스트로, 에피드게임즈, YH데이타베이스 등 IT기업 / 지역인재 전산직 공무원"},
+  {name:"대구일마이스터고등학교",category:"machine",type:"공립",field:"자동차",region:"대구",strength:"대구 자동차부품 산업 집적지 인접 / 완성차·부품사 협약",phone:"053-231-8813",website:"www.dgmeister.hs.kr",address:"대구광역시 동구 효동로 48",ratio:"97 : 3",dept:"자동차산업계열 / 정밀기계가공과 / 금형설계제작과 / 생산자동화과",jobs:"현대·기아 협력사, 자동차부품 제조기업, 자동차 정비·서비스 기업"},
+  {name:"인천전자마이스터고등학교",category:"semicon",type:"공립",field:"전자·통신·AI",region:"인천",strength:"인천 남동국가산업단지 인접 / 수도권 전자·통신 기업과 산학협력 (2026년 전자·통신 → 전자·통신·AI로 분야 확대)",phone:"032-620-8625",website:"intec.icehs.kr",address:"인천광역시 미추홀구 석정로 165",ratio:"87 : 13",dept:"전자제어과 / 정보통신과 / 전자회로과 / 인공지능전자과",jobs:"전자부품 제조기업, 통신장비 기업, 반도체·디스플레이 관련 기업, 공기업 기술직"},
+  {name:"인천해사고등학교",category:"marine",type:"국립",field:"해양(해기사)",region:"인천",strength:"인천 소재 국립 해사고 / 국립해사고등학교 설치령 운영, 학비 전액 국비 지원, 승선근무예비역 병역특례",phone:"032-770-1000",website:"inm.icehs.kr",address:"인천광역시 중구 월미로 338",ratio:"90 : 10",dept:"기관과 / 항해과",jobs:"HMM, 고려해운, 팬오션 등 해운선사 항해사·기관사 / IMS KOREA 등 해운선사 육상직 / 해군·해양경찰"},
+  {name:"광주소프트웨어마이스터고등학교",category:"sw",type:"공립",field:"소프트웨어",region:"광주",strength:"광주 AI 집적단지(국가 AI 데이터센터) 인접 / AI·SW 특화 교육과정",phone:"062-949-6800",website:"gsm.gen.hs.kr",address:"광주광역시 광산구 상무대로 312",ratio:"82 : 18",dept:"SW개발과 / 스마트IoT과 / 인공지능과",jobs:"IT 서비스·SW 개발기업, AI 스타트업, 금융권 IT직군, 공공기관 전산직"},
+  {name:"광주자동화설비마이스터고등학교",category:"machine",type:"공립",field:"자동화설비",region:"광주",strength:"광주 하남·평동산업단지 인접 / 지역 자동화설비·뿌리기업과 협약",phone:"062-949-0520",website:"gat.gen.hs.kr",address:"광주광역시 광산구 사암로92번길 136-26",ratio:"81 : 19",dept:"자동화설비",jobs:"자동화설비 제조기업, 산업용 로봇·FA 기업, 가전·자동차 생산라인 설비직"},
+  {name:"대덕소프트웨어마이스터고등학교",category:"sw",type:"공립",field:"소프트웨어",region:"대전",strength:"대전 유성구 대덕연구단지 인접 / 남학생 70% 이상 산업기능요원 병역특례, 현장실습수당·취업장려수당 지원",phone:"042-866-8811",website:"dsmhs.djsch.kr",address:"대전광역시 유성구 가정북로 76",ratio:"73 : 27",dept:"마이스터공통 / SW개발과 / 임베디드SW과 / 인공지능SW과",jobs:"네이버, 카카오, 토스, 넥슨, EA스포츠 등 테크기업 / 신한은행, 기업은행, 국민은행 IT직군 / 뤼튼테크놀로지, 인프런, 라이너 등 / 금융감독원, KT&G, 주택금융공사, 특허정보진흥원"},
+  {name:"동아마이스터고등학교",category:"machine",type:"사립",field:"전자·기계",region:"대전",strength:"대전 소재, 대덕연구단지 및 중부권 산업단지 인접 / 지역 제조기업과 협약",phone:"042-620-1114",website:"dongahs.djsch.kr",address:"대전 동구 자양동",ratio:"100 : 0",dept:"스마트기계과 / 전기전자제어과 / 스마트자동화시스템과",jobs:"전자·기계 제조 대기업 및 중견기업, 공기업 기술직, 방위산업체"},
+  {name:"울산마이스터고등학교",category:"machine",type:"공립",field:"기계·자동화",region:"울산",strength:"울산 국가산업단지(석유화학·자동차·조선) 중심부 인접 / 현대차·현대중공업 등 지역 대기업 협약",phone:"052-702-2012",website:"school.use.go.kr/ulsanmeister-h/M01/",address:"울산광역시 북구 율동6길 7",ratio:"100 : 0",dept:"산업설비과 / 전기시스템제어과 / 정밀기계과 / 자동화시스템과",jobs:"현대자동차, HD현대중공업, S-OIL, SK에너지 등 울산권 대기업 및 협력사"},
+  {name:"울산에너지고등학교",category:"energy",type:"공립",field:"에너지",region:"울산",strength:"울산 에너지·석유화학 산업단지 인접 / 수도전기공고·충북에너지고·한국에너지마이스터고·한국원자력마이스터고와 공동취업 프로젝트 협약",phone:"052-289-4197",website:"www.usenergy.hs.kr",address:"울산광역시 북구 화동2길 28",ratio:"64 : 36",dept:"전기에너지과 / 신재생에너지과",jobs:"한국수력원자력(고졸 채용 합격), 한국동서발전 등 발전 공기업 / 석유화학·에너지 기업 및 협력사"},
+  {name:"현대공업고등학교",category:"marine",type:"사립",field:"조선해양플랜트",region:"울산",strength:"울산 소재, HD현대중공업 인접 / 현대중공업그룹 연계 조선해양 특화",phone:"052-250-0300",website:"hit.hs.kr",address:"울산광역시 동구 미포로 122",ratio:"94 : 6",dept:"정밀기계과 / 산업설비과 / 전기제어과",jobs:"HD현대중공업, HD현대미포, 현대일렉트릭 등 현대중공업그룹사 및 조선해양 기자재 기업"},
+  {name:"경기게임마이스터고등학교",category:"sw",type:"공립",field:"게임 콘텐츠",region:"경기",strength:"경기 소재, 판교 게임산업 클러스터 인접 / 국내 유일 게임 분야 마이스터고, 게임기업 협약",phone:"031-428-5496",website:"ggm-h.goeay.kr",address:"경기도 안양시 동안구 비산동 학의로",ratio:"90 : 10",dept:"게임개발과",jobs:"넥슨, 엔씨소프트, 넷마블, 크래프톤 등 게임기업 / 게임 개발·아트·QA 직군"},
+  {name:"수원하이텍고등학교",category:"machine",type:"공립",field:"메카트로닉스",region:"경기",strength:"경기 화성·수원 산업벨트 인접 / 수도권 제조 대기업과 산학협력",phone:"031-201-9000",website:"sht-h.goesw.kr",address:"경기도 수원시 영통구 청명북로 56",ratio:"80 : 20",dept:"전기전자제어과 / 메카트로닉스과 / 정밀기계과 / 자동화시스템과",jobs:"삼성전자, 삼성디스플레이 등 대기업 설비·생산기술직 / 반도체·디스플레이 장비기업"},
+  {name:"평택마이스터고등학교",category:"machine",type:"공립",field:"자동차·기계",region:"경기",strength:"평택 고덕 삼성전자 캠퍼스 및 평택항 산업단지 인접 / 지역 대기업 협약",phone:"031-659-1213",website:"ptmt-h.goept.kr",address:"경기도 평택시 중앙1로 61",ratio:"85 : 15",dept:"정밀기계과 / 금형설계과 / 스마트자동화과 / 전기전자과 / 기계전자융합계열과",jobs:"삼성전자 평택캠퍼스, 자동차부품 기업, 기계 제조기업 및 협력사"},
+  {name:"한국소방마이스터고등학교",category:"construct",type:"공립",field:"소방",region:"강원",strength:"강원 소재, 전국 유일 소방 분야 마이스터고 / 소방청·소방학교 연계 교육과정",phone:"033-373-2764",website:"fire-meister.gwe.hs.kr",address:"강원도 영월군 영월읍 영모전길",ratio:"63 : 37",dept:"소방안전관리과",jobs:"소방공무원(소방사 공채), 위험물·소방설비 관리기업, 산업체 자체 소방대, 소방시설 점검·시공 기업"},
+  {name:"한국에너지마이스터고등학교",category:"energy",type:"공립",field:"발전산업",region:"강원",strength:"강원 소재, 동해안 발전산업 벨트 인접 / 울산에너지고 등 전국 에너지 마이스터고와 공동취업 협약",phone:"033-570-1246",website:"energy.gwe.hs.kr",address:"강원도 삼척시 근덕면 삼척로 3700",ratio:"96 : 4",dept:"시스템설비과 / 전기과",jobs:"한국남동·남부·동서·서부·중부발전 등 발전 공기업 / 한국수력원자력, 한전KPS / 발전 정비·기자재 기업"},
+  {name:"한국의료마이스터고등학교",category:"bio",type:"공립",field:"의료기기·바이오",region:"강원",strength:"강원 원주 의료기기 테크노밸리 인접 / 국내 최대 의료기기 클러스터 연계",phone:"033-730-8110",website:"www.wonjumedi.com",address:"강원도 원주시 문막읍 원문로 1756",ratio:"64 : 36",dept:"의료기계과 / 의료전기전자과 / 바이오의약과",jobs:"의료기기 제조기업(원주 의료기기 클러스터 소재), 바이오·제약 기업, 의료기기 품질·인허가 직군"},
+  {name:"충북반도체고등학교",category:"semicon",type:"공립",field:"반도체장비",region:"충북",strength:"충북 음성 소재, 청주 SK하이닉스 클러스터 인접 / 삼성 마이스터 장학생 전국 상위권 배출, 취업률 96.4%",phone:"043-878-0367",website:"www.cbsemi.hs.kr",address:"충청북도 음성군 금왕읍 무극로",ratio:"89 : 11",dept:"반도체제조과 / 반도체장비과 / 반도체케미컬과",jobs:"삼성전자 DS부문, 삼성전기, 삼성디스플레이, 스태츠칩팩코리아 등 국내외 반도체 및 첨단 전자산업 분야 대기업이 취업처의 다수"},
+  {name:"충북에너지고등학교",category:"energy",type:"공립",field:"차세대전지(이차전지)",region:"충북",strength:"충북 이차전지 특화단지 인접 / 에너지 마이스터고 공동취업 프로젝트 참여",phone:"043-290-7601",website:"school.cbe.go.kr/cbenergy-h/M01",address:"충청북도 청주시 상당구 미원면 미원초정로",ratio:"82 : 18",dept:"이차전지과 / 태양전지과",jobs:"LG에너지솔루션, 에코프로 등 이차전지 기업 / 발전 공기업 / 배터리 소재·장비 기업"},
+  {name:"한국바이오마이스터고등학교",category:"bio",type:"공립",field:"바이오",region:"충북",strength:"충북 오송 바이오·의약 클러스터(오송생명과학단지) 인접 / 식약처·질병관리청 등 국책기관 인접",phone:"043-532-1350",website:"kbm.hs.kr",address:"충청북도 진천군 진천읍 남산4길",ratio:"59 : 41",dept:"바이오식품과 / 바이오제약과",jobs:"셀트리온, LG화학 생명과학, 녹십자 등 바이오·제약 기업 / 오송 소재 CDMO 및 의약품 제조기업"},
+  {name:"공주마이스터고등학교",category:"semicon",type:"공립",field:"전기·전자",region:"충남",strength:"충남 소재, 천안·아산 전자산업 벨트 인접 / 지역 대기업 협약",phone:"041-841-2702",website:"gong.cnehs.kr",address:"충남 공주시 유구읍 백교리",ratio:"85 : 15",dept:"전기전자과",jobs:"삼성전자, 삼성디스플레이, LG디스플레이 등 전자 대기업 및 협력사"},
+  {name:"아산스마트팩토리마이스터고등학교",category:"machine",type:"공립",field:"스마트공장",region:"충남",strength:"충남 아산 디스플레이·자동차 산업단지 인접 / 스마트팩토리 특화 교육과정",phone:"041-422-4212",website:"smart.cnehs.kr",address:"충청남도 아산시 둔포면 둔포중앙로",ratio:"93 : 7",dept:"스마트팩토리과",jobs:"삼성디스플레이, 현대자동차 아산공장 등 지역 대기업 / 스마트팩토리 구축·자동화 설비 기업"},
+  {name:"연무마이스터고등학교",category:"machine",type:"공립",field:"자동차부품제조",region:"충남",strength:"충남 논산 소재, 중부권 자동차부품 산업단지 인접 / 부품 제조기업과 협약",phone:"041-742-7302",website:"yeonmutech.cnehs.kr",address:"충청남도 논산시 연무읍 연무로",ratio:"94 : 6",dept:"미래자동차부품가공과 / 미래자동차전기전자과 / 미래자동차금형과",jobs:"현대·기아 1차 협력사 등 자동차부품 제조기업, 금형·정밀가공 기업"},
+  {name:"충남반도체마이스터고등학교",category:"semicon",type:"공립",field:"반도체",region:"충남",strength:"충남 천안·아산 반도체·디스플레이 벨트 인접 / 반도체 분야 신설 마이스터고",phone:"041-404-0063",website:"yes.cnehs.kr",address:"충남 예산군 예산읍 관작리",ratio:"92 : 8",dept:"정보통신과 / 디지털전자과 / 전기제어과 / 반도체융합과",jobs:"삼성전자, SK하이닉스, 삼성디스플레이 등 반도체·디스플레이 대기업 및 소부장 기업"},
+  {name:"한국식품마이스터고등학교",category:"bio",type:"공립",field:"식품",region:"충남",strength:"충남 소재, 식품 클러스터 및 식품기업 협약 / 전국 유일 식품 분야 마이스터고",phone:"041-836-1052",website:"cff.cnehs.kr",address:"충청남도 부여군 홍산면 홍산로",ratio:"64 : 36",dept:"공통과 / 식품제조공정과 / 식품품질관리과",jobs:"CJ제일제당, 농심, 오뚜기, 풀무원 등 식품 제조기업 / 식품 품질관리·HACCP 직군"},
+  {name:"합덕제철고등학교",category:"machine",type:"공립",field:"철강",region:"충남",strength:"충남 당진 현대제철 당진제철소 인접 / 철강 분야 특화, 현대제철 연계",phone:"041-362-2793",website:"steel.cnehs.kr",address:"충남 당진시 합덕읍 소소리",ratio:"100 : 0",dept:"철강자동화과 / 철강기계과 / 철강로봇융합과",jobs:"현대제철, 동국제강 등 철강기업 / 철강 압연·제강 설비 및 협력사"},
+  {name:"군산기계공업고등학교",category:"sw",type:"공립",field:"AI·로봇",region:"전북",strength:"전북 군산국가산업단지 인접 / 새만금 산업벨트 연계, 지역 제조기업 협약 (2026년 조선·기계 → AI·로봇으로 분야 변경)",phone:"063-730-5500",website:"www.gunsan-mh.hs.kr",address:"전라북도 군산시 군중길 28",ratio:"100 : 0",dept:"기계시스템제어과 / 전기시스템제어과",jobs:"자동차부품·기계 제조기업, 로봇·자동화 설비 기업, 공기업 기술직, 군 기술부사관"},
+  {name:"김제농생명마이스터고등학교",category:"agri",type:"공립",field:"농생명자원 생산·가공",region:"전북",strength:"전북 김제 소재, 새만금 농생명용지 및 국가식품클러스터 인접",phone:"063-546-5313",website:"gmhsas.hs.kr",address:"전라북도 김제시 신풍동 남북9길",ratio:"66 : 34",dept:"바이오식품과 / 종자산업과 / 스마트팜산업과",jobs:"농협 계열사, 종자·비료 기업, 농생명 가공·유통 기업, 스마트팜 기업 및 창업 영농"},
+  {name:"전북기계공업고등학교",category:"machine",type:"국립",field:"기계",region:"전북",strength:"전북 익산 소재 국립 마이스터고 / 익산·군산 산업단지 인접, 국립 3개 마이스터고 중 하나",phone:"063-720-5313",website:"school.jbedu.kr/cmt",address:"전라북도 익산시 인북로32길 41",ratio:"98 : 2",dept:"폴리메카닉스과 / 메카트로닉스과 / 로봇자동화과 / 정밀기계과",jobs:"대기업 생산기술직, 기계·금형 제조기업, 공기업, 군 기술부사관"},
+  {name:"한국경마축산고등학교",category:"agri",type:"공립",field:"말 산업",region:"전북",strength:"전북 소재, 한국마사회 연계 / 국내 유일 말 산업 분야 마이스터고",phone:"063-634-2031",website:"school.jbedu.kr/horseman",address:"전북 남원시 운봉읍 준향리",ratio:"46 : 54",dept:"말산업과",jobs:"한국마사회, 경마장·승마장, 말 조련·재활 기업, 축산 관련 기업 및 기수·조교사 진로"},
+  {name:"여수석유화학고등학교",category:"energy",type:"공립",field:"석유화학산업",region:"전남",strength:"전남 여수국가산업단지(국내 최대 석유화학단지) 인접 / 단지 내 대기업과 직접 협약",phone:"061-688-0710",website:"yspetchem.hs.jne.kr",address:"전라남도 여수시 화장동 대통1길",ratio:"82 : 18",dept:"공정운전과 / 공정설비과 / 공정계전과",jobs:"GS칼텍스, LG화학, 롯데케미칼, 여천NCC, 한화솔루션 등 여수산단 석유화학 대기업"},
+  {name:"완도수산고등학교",category:"marine",type:"공립",field:"어업 및 수산물가공",region:"전남",strength:"전남 완도 소재, 국내 최대 전복·해조류 양식 산지 / 수산 특화",phone:"061-552-3372",website:"wandosugo.hs.jne.kr",address:"전라남도 완도군 완도읍 장보고대로",ratio:"74 : 26",dept:"수산자원양식과 / 수산식품가공과 / 어선운항관리과",jobs:"수산물 가공·유통 기업, 양식업체, 수협 및 수산 공공기관, 원양어선 승선"},
+  {name:"전남생명과학고등학교",category:"agri",type:"공립",field:"친환경 농축산",region:"전남",strength:"전남 소재, 친환경 농축산 특화 / 농협·축산 유관기관 협약",phone:"061-430-6200",website:"jn-life.hs.jne.kr",address:"전라남도 강진군 강진읍 교촌길 23",ratio:"77 : 23",dept:"친환경농업경영과 / 친환경축산경영과 / 친환경원예경영과",jobs:"농협 계열사, 축산·사료 기업, 친환경 농산물 가공·유통 기업, 농업 공공기관"},
+  {name:"한국항만물류고등학교",category:"finance",type:"공립",field:"항만물류",region:"전남",strength:"전남 광양항 배후단지 인접 / 국내 유일 항만물류 분야 마이스터고, 항만공사 연계",phone:"061-797-0308",website:"kpl.hs.jne.kr",address:"전라남도 광양시 진상면 신시길",ratio:"97 : 3",dept:"물류시스템운영과 / 전기 / 기계 / 운전 / 물류장비기술과(공통)",jobs:"여수광양항만공사, 부산항만공사 등 항만 공기업 / CJ대한통운, 한진 등 물류기업 / 컨테이너 터미널 운영사"},
+  {name:"경북바이오마이스터고등학교",category:"bio",type:"공립",field:"바이오",region:"경북",strength:"경북 안동 바이오생명 국가산업단지 인접 / 백신·바이오 클러스터 연계 (2026년 식품품질관리 → 바이오로 분야 변경)",phone:"054-332-0474",website:"school.gyo6.net/gfsm",address:"경상북도 영천시 신녕면 찰방길 8",ratio:"42 : 58",dept:"바이오식의약과",jobs:"SK바이오사이언스 안동공장 등 백신·바이오 기업 / 제약·건강기능식품 제조기업"},
+  {name:"경북소프트웨어마이스터고등학교",category:"sw",type:"공립",field:"디지털·소프트웨어",region:"경북",strength:"경북 소재, 구미 전자산업단지 인접 / SW·디지털 특화",phone:"054-832-2903",website:"www.gbsw.hs.kr",address:"경상북도 의성군 봉양면 봉호로 14",ratio:"87 : 13",dept:"소프트웨어개발과 / 게임개발과 / 인공지능소프트웨어과",jobs:"IT 서비스·SW 개발기업, 전자기업 SW직군, 금융권 IT, 공공기관 전산직"},
+  {name:"구미전자공업고등학교",category:"semicon",type:"국립",field:"전자",region:"경북",strength:"경북 구미국가산업단지 인접 국립 마이스터고 / 전자산업 집적지 입지, 국립 3개 마이스터고 중 하나",phone:"054-470-3809",website:"school.gyo6.net/gnet",address:"경상북도 구미시 임수로 48",ratio:"76 : 24",dept:"전자과 / 메카트로닉스과",jobs:"삼성전자, LG전자, LG디스플레이, SK실트론 등 전자·반도체 대기업 및 구미산단 협력사"},
+  {name:"금오공업고등학교",category:"machine",type:"공립",field:"기계·전자모바일",region:"경북",strength:"경북 구미국가산업단지 인접 / 기계·전자 복합 교육과정, 지역 대기업 협약",phone:"054-461-1683",website:"koths.school.gyo6.net",address:"경상북도 구미시 공단동 구미대로30길",ratio:"100 : 0",dept:"정밀기계과 / 자동화시스템과 / 전기전자과",jobs:"삼성전자, LG전자 등 전자 대기업 / 기계·금형 제조기업 / 방위산업체 및 군 기술부사관"},
+  {name:"포항제철공업고등학교",category:"machine",type:"사립",field:"철강",region:"경북",strength:"경북 포항 소재, 포스코가 설립한 포스코교육재단 운영 / 포스코 포항제철소 인접, 포스코·포스코퓨처엠 채용설명회 정례 운영",phone:"054-279-4611",website:"school.gyo6.net/pocheoltechhs",address:"경상북도 포항시 남구 지곡동 지곡로",ratio:"100 : 0",dept:"재료기술과 / 자동화기계과 / 전기전자제어과",jobs:"포스코, 포스코퓨처엠(케미컬), 포스코DX 등 포스코 그룹사 / 철강 설비·소재 기업"},
+  {name:"한국국제통상마이스터고등학교",category:"finance",type:"공립",field:"글로벌 비즈니스",region:"경북",strength:"경북 소재, 무역·통상 특화 / 국내 유일 글로벌 비즈니스 분야 마이스터고",phone:"070-4107-0523",website:"gampohs.school.gyo6.net",address:"경상북도 경주시 감포읍 감포로12길 20",ratio:"47 : 53",dept:"기계자동차 국제무역과 / 전자산업 국제무역과",jobs:"무역상사, 물류·포워딩 기업, 대기업 해외영업·구매 직군, 금융권 및 공공기관"},
+  {name:"한국반도체마이스터고등학교",category:"semicon",type:"공립",field:"반도체",region:"경북",strength:"경북 소재, 구미 반도체 특화단지 인접 / 반도체 공정·장비 특화",phone:"054-778-7819",website:"school.gyo6.net/kjth/main.do",address:"경상북도 경주시 금성로 209",ratio:"85 : 15",dept:"전기에너지과 / 스마트전자과 / 스마트융합기계과 / 반도체융합과",jobs:"삼성전자, SK하이닉스, SK실트론 등 반도체 대기업 및 소부장(소재·부품·장비) 기업"},
+  {name:"한국원자력마이스터고등학교",category:"energy",type:"공립",field:"원자력발전설비",region:"경북",strength:"경북 울진 소재, 한울원자력본부 인접 / 국내 유일 원자력 분야 마이스터고, 에너지 마이스터고 공동취업 협약",phone:"054-789-8000",website:"school.gyo6.net/pyth/main.do",address:"경상북도 울진군 평해읍 월송정로",ratio:"100 : 0",dept:"기계과 / 전기제어과",jobs:"한국수력원자력(한울·월성·고리 원자력본부), 한전KPS, 한국전력기술 / 발전 공기업 및 원전 정비·기자재 기업"},
+  {name:"한국해양마이스터고등학교",category:"marine",type:"공립",field:"스마트 해양수산",region:"경북",strength:"경북 동해안 수산 산업지역 소재 / 해양수산 특화, 수협·해양 공공기관 연계",phone:"054-252-0111",website:"school.gyo6.net/haema",address:"경북 포항시 북구 여남동",ratio:"78 : 22",dept:"스마트운항과 / 스마트양식과",jobs:"수협, 해양수산 공공기관, 수산물 가공·유통 기업, 스마트 양식 기업, 해양경찰"},
+  {name:"거제공업고등학교",category:"marine",type:"공립",field:"조선",region:"경남",strength:"경남 거제 소재, 한화오션·삼성중공업 등 국내 양대 조선소 인접 / 조선업 특화 마이스터고, 연 120여 명 기술인재 배출",phone:"055-630-9012",website:"geoje-th-h.gne.go.kr",address:"경상남도 거제시 계룡로11길 63",ratio:"97 : 3",dept:"조선기계과 / 조선전기과",jobs:"삼성전자, 삼성디스플레이, 두산에너빌리티 등 주요 기업 27개사 / 현대삼호중공업, 한화오션, 삼성중공업 등 조선사"},
+  {name:"공군항공과학고등학교",category:"construct",type:"국립",field:"항공기술",region:"경남",strength:"대한민국 공군이 직접 운영하는 군 특성화 마이스터고 / 졸업 시 공군 기술부사관 임관 보장",phone:"055-750-2141",website:"www.airforce.mil.kr/user/indexMain.action?siteId=kokyo",address:"경상남도 진주시 금산면 송백로",ratio:"72 : 28",dept:"항공통제과 / 항공전자과 / 항공기계과 / 정보통신과",jobs:"대한민국 공군 기술부사관(항공기 정비·항공전자·무기정비 등 특기) 임관"},
+  {name:"삼천포공업고등학교",category:"construct",type:"공립",field:"항공·조선",region:"경남",strength:"경남 사천 항공우주산업(KAI) 클러스터 인접 / 항공·조선 복합 교육과정",phone:"055-834-8601",website:"samgong-h.gne.go.kr",address:"경상남도 사천시 신항로 63",ratio:"96 : 4",dept:"항공산업과 / 조선산업과 / 항공전기과",jobs:"한국항공우주산업(KAI) 및 항공부품 협력사 / 조선 기자재 기업 / 방위산업체"},
+  {name:"한국나노마이스터고등학교",category:"semicon",type:"공립",field:"나노융합",region:"경남",strength:"경남 밀양 나노융합 국가산업단지 인접 / 국내 유일 나노 분야 마이스터고",phone:"055-352-7537",website:"nano-h.gne.go.kr",address:"경상남도 밀양시 무안면 신법길 29",ratio:"81 : 19",dept:"나노융합과",jobs:"나노소재·부품 기업, 반도체·디스플레이 소재 기업, 정밀화학 기업"},
+];
+
+/* ===== 연혁 ===== */
+const historyData = [
+  { year:"2008", txt:"정부의 ‘한국형 마이스터고 육성계획’ 발표 — 산업수요 맞춤형 고교 육성" },
+  { year:"2009", txt:"거제공고·경북기계공고·구미전자공고 등 9개교 지정으로 출발 (21개교 개교)" },
+  { year:"2013", txt:"39개교로 확대" },
+  { year:"2015", txt:"47개교로 확대 — 소프트웨어·스마트공장 등 신산업 분야 진입" },
+  { year:"2023", txt:"57개교로 확대 — 게임·스마트해양 등 4차 산업혁명 분야 지정" },
+  { year:"2026", txt:"반도체 산업 성장에 따라 2개교 추가, 59개교 체제 (58개교 운영 중)" },
+  { year:"2026", txt:"반도체·AI 등 첨단산업 중심 신규 6개교 지정 — 2028년 총 65개교 예정" },
+];
+
+/* ===== 2026 신규 6개교 ===== */
+const newSchools = [
+  { emoji:"💾", name:"(가칭)부산반도체마이스터고", oldname:"기존 부산전자공업고 전환 (1938년 개교)", field:"반도체", loc:"부산 동래구", status:"동의", cap:"학년당 96명 (3년 288명)",
+    desc:"기존 전기·전자·기계 학과를 반도체과 단일학과로 개편(반도체공정장비·반도체소자제조 2개 과정). 2026년 2월 전국 고교 최초로 전(前)공정·후(後)공정 교육이 모두 가능한 ‘반도체교육센터’를 구축했습니다. 총 726억 원 지원, 기장군 전력반도체 특화단지와 연계한 동남권 반도체 거점을 지향합니다." },
+  { emoji:"🔬", name:"(가칭)용인반도체마이스터고", oldname:"6개교 중 유일한 신설 학교", field:"반도체", loc:"경기 용인 처인구 남사읍", status:"동의", cap:"학년당 96명 (총 18학급)",
+    desc:"옛 남사초 부지에 신축 중이며 2027년 3월 ‘용인반도체고(특성화고)’로 선개교한 뒤 2028년 3월 마이스터고로 전환됩니다. 반도체제조공정과·반도체장비과 각 3학급씩 운영, 52개 기업과 MOU·채용 약정을 체결했습니다. 전국 반도체 산업의 77.1%가 경기권에 집중됐으나 반도체 마이스터고가 없었던 점을 보완합니다." },
+  { emoji:"🔋", name:"(가칭)국제배터리마이스터고", oldname:"기존 이리공업고 전환 (85년 전통)", field:"AI + 이차전지", loc:"전북 익산", status:"동의", cap:"학년당 96명 (총 18학급)",
+    desc:"전북교육청이 배터리융합과 96명, 총 18학급 288명 규모로 운영할 계획입니다. 기숙사 신축비 190억 원을 확보했고 새만금 이차전지 특화단지 인력 수요에 대응합니다. 배터리산업협회·전북대·군산대·성일하이텍 등 산·학·관 컨소시엄을 구성했습니다. (지정 분야가 ‘AI+이차전지’로 확정되어 교명은 조정될 수 있음)" },
+  { emoji:"⚡", name:"목포공업고 (교명 미정)", oldname:"기존 목포공업고 전환 (1927년 전신 개교)", field:"AI 에너지", loc:"전남 목포 용당동", status:"조건부", cap:"학년당 128명",
+    desc:"재생에너지와 AI를 융합한 ‘지능형 에너지 산업인재’를 양성합니다. 해상풍력·그린수소·ESS·AI 데이터센터 등 지역 전략산업과 연계해 생산‒저장‒변환‒전송‒소비 전 과정을 아우르는 밸류체인 전문인력을 키웁니다. 총 162억 원 투입(교육부 50억·전남교육청 100억·목포시 12억)." },
+  { emoji:"🏗️", name:"해남공업고 (교명 미정)", oldname:"기존 해남공업고 전환", field:"AI 산업인프라", loc:"전남 해남", status:"조건부", cap:"학년당 80명",
+    desc:"AI 기반 산업인프라 분야 인재를 양성합니다. 총 189억 원 투입으로 6개교 중 지자체 분담액이 가장 큽니다(해남군 39억). 지정 후 교육과정을 전면 개편하고 전원 기숙사 생활, 산학겸임교사 중심의 실무 교육 체계를 도입합니다." },
+  { emoji:"🤖", name:"문경공업고 (교명 미정)", oldname:"기존 문경공업고 전환", field:"AI 로봇", loc:"경북 문경", status:"조건부", cap:"학년당 60명 (6개교 중 최소)",
+    desc:"기존 전통 제조업 중심 교육을 넘어 기계·전기·전자 기술을 융합한 ‘AI로봇 융합 교육 모델’을 구축합니다. 전국 6.5대 1 경쟁률을 뚫고 ‘2026 미래유망분야 고졸인력양성사업’에 최종 선정됐으며, 한국로봇융합연구원과 연계해 3년간 300시간 이상 AI로봇 실무훈련을 이수합니다." },
+];
+
+/* ========== 렌더링 ========== */
+const catMap = Object.fromEntries(categories.map(c=>[c.key,c]));
+function normUrl(u){ return /^https?:\/\//.test(u) ? u : "https://"+u; }
+function typeClass(t){ return t==="국립"?"gov":(t==="사립"?"pri":""); }
+
+/* 학교의 산업분야를 상징하는 이모지 이미지 선택 (키워드 우선 매칭) */
+const fieldImages = [
+  { kw:["자동차부품","부품제조"], emo:["🚗","🔧","🛞"] },
+  { kw:["자동차"],               emo:["🚗","🏎️","🔧"] },
+  { kw:["반도체","나노"],         emo:["🔬","💾","⚡"] },
+  { kw:["전자","전기","통신"],     emo:["🔌","📡","💡"] },
+  { kw:["로봇"],                 emo:["🤖","🦾","⚙️"] },
+  { kw:["게임"],                 emo:["🎮","👾","🕹️"] },
+  { kw:["소프트웨어","SW","디지털","AI","인공지능"], emo:["💻","🖥️","⌨️"] },
+  { kw:["조선","해양플랜트"],      emo:["🚢","⚓","🔩"] },
+  { kw:["해양","수산","어업","해기사"], emo:["🌊","🐟","🚢"] },
+  { kw:["항만","물류","무역","비즈니스"], emo:["📦","🚢","🚚"] },
+  { kw:["원자력"],               emo:["⚛️","🔋","⚡"] },
+  { kw:["석유화학","화학"],        emo:["🧪","🛢️","⚗️"] },
+  { kw:["이차전지","전지","배터리"], emo:["🔋","⚡","🔌"] },
+  { kw:["에너지","발전"],          emo:["⚡","🔋","💡"] },
+  { kw:["의료"],                 emo:["🩺","💊","🔬"] },
+  { kw:["바이오"],               emo:["🧬","🔬","💉"] },
+  { kw:["식품"],                 emo:["🍱","🥫","🧑‍🍳"] },
+  { kw:["농생명","농업","원예","종자"], emo:["🌱","🚜","🌾"] },
+  { kw:["축산","말"],            emo:["🐄","🐎","🌾"] },
+  { kw:["철강"],                 emo:["🏭","🔩","🔥"] },
+  { kw:["소방"],                 emo:["🚒","🧯","🔥"] },
+  { kw:["항공"],                 emo:["✈️","🛩️","🛰️"] },
+  { kw:["건설","플랜트","인프라"], emo:["🏗️","🏢","🚧"] },
+  { kw:["기계","메카트로닉스","자동화","스마트공장","산업설비"], emo:["⚙️","🔧","🏭"] },
+  { kw:["뉴미디어","콘텐츠","디자인"], emo:["🎨","🎬","🖌️"] },
+];
+function pickEmojis(s){
+  const hay = (s.field+" "+s.name+" "+s.dept);
+  for(const f of fieldImages){ if(f.kw.some(k=>hay.includes(k))) return f.emo; }
+  return [catMap[s.category].icon];
+}
+
+function goPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-links button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.nav-links button').forEach(b=>b.addEventListener('click',()=>goPage(b.dataset.page)));
+
+document.getElementById('timeline').innerHTML = historyData.map(h=>
+  `<div class="tl-item"><div class="year">${h.year}</div><div class="txt">${h.txt}</div></div>`).join('');
+
+document.getElementById('new-grid').innerHTML = newSchools.map(s=>{
+  const st = s.status==="동의" ? `<span class="tagx ok">✔ 동의</span>` : `<span class="tagx cond">◐ 조건부 동의</span>`;
+  return `<div class="new-card">
+    <div class="top"><div class="emoji">${s.emoji}</div><div><h3>${s.name}</h3><div class="oldname">${s.oldname}</div></div></div>
+    <div class="meta"><span class="tagx field">${s.field}</span><span class="tagx loc">📍 ${s.loc}</span>${st}<span class="tagx cap">${s.cap}</span></div>
+    <p>${s.desc}</p></div>`;
+}).join('');
+
+let currentCat = categories[0].key;
+function renderTabs(){
+  document.getElementById('tabs').innerHTML = categories.map(c=>{
+    const cnt = schools.filter(s=>s.category===c.key).length;
+    const active = c.key===currentCat;
+    return `<button class="tab ${active?'active':''}" style="${active?`background:${c.color};`:''}" onclick="selectCat('${c.key}')">
+      <span class="ic">${c.icon}</span>${c.name}<span class="cnt">${cnt}</span></button>`;
+  }).join('');
+}
+function selectCat(key){ currentCat=key; renderTabs(); renderTable(); }
+
+function renderTable(){
+  const c = catMap[currentCat];
+  document.getElementById('field-banner').innerHTML =
+    `<div class="field-banner" style="background:linear-gradient(120deg,${c.color}33,transparent);">
+      <div class="big-ic">${c.icon}</div><div><h3>${c.name}</h3><p>${c.desc}</p></div></div>`;
+  const list = schools.map((s,i)=>({s,i})).filter(o=>o.s.category===currentCat);
+  const tb = document.getElementById('school-tbody');
+  if(!list.length){ tb.innerHTML=`<tr><td colspan="4"><div style="padding:40px;text-align:center;color:var(--text-dim)">해당 분야의 학교가 없습니다.</div></td></tr>`; return; }
+  tb.innerHTML = list.map(({s,i})=>
+    `<tr onclick="openModal(${i})">
+      <td data-label="학교명"><span class="school-name">${s.name}<span class="arrow">›</span></span></td>
+      <td data-label="설립구분"><span class="pill ${typeClass(s.type)}">${s.type}</span></td>
+      <td data-label="산업분야">${s.field}</td>
+      <td data-label="지역">${s.region}</td>
+    </tr>`).join('');
+}
+
+function openModal(idx){
+  const s = schools[idx], c = catMap[s.category];
+  // 분야 상징 이미지 배너
+  document.getElementById('modal-illust').style.background = `linear-gradient(135deg,${c.color},${c.color}77)`;
+  document.getElementById('modal-illust').innerHTML = pickEmojis(s).map(e=>`<span class="em">${e}</span>`).join('');
+  document.getElementById('m-field').textContent = `${c.icon} ${c.name}`;
+  document.getElementById('m-name').textContent = s.name;
+  document.getElementById('m-tags').innerHTML =
+    `<span class="chip">${s.type}</span><span class="chip">${s.field}</span><span class="chip">${s.region}</span>`;
+  document.getElementById('m-strength').textContent = s.strength || '-';
+  document.getElementById('m-phone').textContent = s.phone || '-';
+  document.getElementById('m-web').innerHTML = s.website ? `<a href="${normUrl(s.website)}" target="_blank" rel="noopener">${s.website}</a>` : '-';
+  document.getElementById('m-addr').textContent = s.address || '-';
+  // 남녀비율 — 색상 위주 막대 + 범례
+  const m = (s.ratio||"").split(':');
+  const mv = parseInt(m[0])||0, fv = parseInt(m[1])||0;
+  let bar;
+  if(fv===0)      bar = `<div class="ratio-m" style="width:100%"><span class="lab">남</span></div>`;
+  else if(mv===0) bar = `<div class="ratio-f" style="width:100%"><span class="lab">여</span></div>`;
+  else            bar = `<div class="ratio-m" style="width:${mv}%"><span class="lab">남</span></div><div class="ratio-f" style="width:${fv}%"><span class="lab">여</span></div>`;
+  document.getElementById('m-ratio').innerHTML =
+    `<div class="ratio-bar">${bar}</div>
+     <div class="ratio-legend"><span><i style="background:#3a9e94"></i>남 ${mv}%</span><span><i style="background:#c56f92"></i>여 ${fv}%</span></div>`;
+  // 학과
+  const depts = (s.dept||"").split('/').map(d=>d.trim()).filter(Boolean);
+  document.getElementById('m-depts').innerHTML = depts.map(d=>`<span class="chip">${d}</span>`).join('') || '-';
+  document.getElementById('m-jobs').textContent = s.jobs || '-';
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){ document.getElementById('modal').classList.remove('open'); document.body.style.overflow=''; }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+renderTabs(); renderTable();
+</script>
+</body>
+</html>
